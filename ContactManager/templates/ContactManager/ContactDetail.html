@@ -1,0 +1,91 @@
+{% extends "ContactManager/_base.html" %}
+{% block content %}
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-3"></div>
+            <div class="col-md-6">
+                <h3 class="jumbotron" style="text-align: center">Contact Viewer/ Editor</h3>
+                <h4 style="color: crimson;text-align: center">{{ recent_change }}</h4>
+                <div style="background-color: azure;">
+                    <div class=" form-group">
+                        <label for="first_name">First Name:</label>
+                        <input class="form-control" type="text" id="first_name" value={{ person.first_name }} />
+                    </div>
+                    <div class="form-group">
+                        <label for="last_name">Last Name:</label>
+                        <input class="form-control" type="text" id="last_name" value={{ person.last_name}} />
+                    </div>
+                    <div class="form-group">
+                        <label for="date_of_birth">Date of Birth:</label>
+                        <input class="form-control" type="date" id="date_of_birth" value="{{ person.date_of_birth|date:"Y-m-d" }}"/>
+                        <button class="name_change btn-primary" id="{{ "name_change" }}_{{ person.id }}">Change Contact Info</button>
+                    </div>
+                </div>
+                <br>
+                <br>
+                <div class="form-group">
+                    <h4 class="jumbotron" style="text-align: center">Email List</h4>
+                    {% for email in email_query %}
+                        <input class="form-control"type="email" value="{{ email }}" id="{{ person.id }}_{{ "email" }}_{{ email.id }}" />
+                        <button class="email-handler btn-primary" id="{{ "email" }}_{{ person.id }}_{{ "email" }}_{{ email.id }}" >Edit</button>
+                    {% endfor %}
+                </div>
+                <div class="form-group">
+                    <h4 class="jumbotron" style="text-align: center">Address List</h4>
+                    {% for address in address_query %}
+                        <input class="form-control" type="text" value="{{ address }}" id="{{ person.id }}_{{ "address" }}_{{ address.id }}" />
+                        <button class="address-handler btn-primary" id="{{ "address" }}_{{ person.id }}_{{ "address" }}_{{ address.id }}" >Edit</button>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+{% block page_scripts %}
+    var email_change = document.getElementsByClassName("email-handler");
+    var address_change = document.getElementsByClassName("address-handler");
+    var person_info_change = document.getElementsByClassName("name_change");
+
+    function dispatch_email_change(event){
+        var nodeId = event.target.id;
+        var nodeIdString = nodeId.split("_");
+        nodeIdString.shift();
+        var inputId = nodeIdString.join("_");
+        var email_input = document.getElementById(inputId);
+        var link = "/change-email/" + nodeIdString[0] + "/" +nodeIdString[2] +"?email="+email_input.value;
+        console.log(link);
+        window.location =link;
+    }
+
+    function dispatch_address_change(event){
+        var nodeId = event.target.id;
+        var nodeIdString = nodeId.split("_");
+        nodeIdString.shift();
+        var inputId = nodeIdString.join("_");
+        var address_input = document.getElementById(inputId);
+        var link = "/change-address/" + nodeIdString[0] + "/" +nodeIdString[2] +"?address="+address_input.value;
+        window.location = link;
+    }
+
+    function dispatch_person_change(event){
+        var personId = event.target.id;
+        personId = personId.split("_");
+        var first_name = document.getElementById("first_name").value;
+        var last_name = document.getElementById("last_name").value;
+        var date_of_birth = document.getElementById("date_of_birth").value;
+        var link = "/change-person-info/" + personId.pop() + "?"+"first_name=" + first_name +"&" +"last_name=" + last_name + "&date_of_birth="+date_of_birth;
+        window.location = link;
+    }
+
+    for (var i=0;i<email_change.length; i++){
+        email_change[i].addEventListener("click", dispatch_email_change, false);
+    }
+
+    for(var j=0;j<address_change.length; j++){
+        address_change[j].addEventListener("click",dispatch_address_change,false);
+    }
+    for (var k=0;k<person_info_change.length; k++){
+        person_info_change[k].addEventListener("click", dispatch_person_change, false);
+    }
+
+{% endblock %}

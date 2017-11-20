@@ -1,0 +1,74 @@
+{% extends "ContactManager/_base.html" %}
+{% block content %}
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-4"></div>
+            <div class="col-md-4" style="background-color:lightgray ">
+                <h3 class="jumbotron" style="text-align: center; background-color: cadetblue">Contact Form</h3>
+                <form class="form-horizontal" method="post" action="/save-contact/">
+                    {% csrf_token %}
+                    <div class="form-group">
+                        <label for="first_name">First Name: </label>
+                        <input type="text" class="form-control" id="first_name" name="first_name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="last_name">Last Name: </label>
+                        <input type="text" class="form-control" id="last_name" name="last_name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="DOB">Date of Birth:</label>
+                        <input type="date" class="form-control" id="DOB" name="date_of_birth" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="email_address">Email:</label>
+                        <div id="email_section">
+                            <input type="email" class="form-control" id="email_address" name="email_0">
+                        </div>
+                        <button class="button btn-primary" id="add_email">ADD NEW EMAIL</button>
+                    </div>
+                    <div class="form-group">
+                        <label for="address">Address:</label>
+                        <div id="address_section">
+                            <input type="text" class="form-control" id="email_address" name="address_0">
+                        </div>
+                        <button class="button btn-primary" id="add_address" >ADD NEW ADDRESS</button>
+                    </div>
+                    <input type="submit" value="Submit"/>
+                </form>
+            </div>
+            <div class="col-md-4"></div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block page_scripts %}
+    var emailFieldCounter = 0;
+    var addressFieldCounter = 0;
+
+    function AddNewItem(type, destination){
+        var el = document.createElement("input");
+        el.setAttribute("class", "form-control");
+        el.setAttribute("type", type);
+        switch(type){
+            case "email":
+                emailFieldCounter++;
+                el.setAttribute("name", ("email_"+emailFieldCounter.toString()));
+                break;
+            case "text":
+                addressFieldCounter++;
+                el.setAttribute("name", ("address_"+addressFieldCounter.toString()));
+                break;
+        }
+        document.getElementById(destination).appendChild(el);
+    }
+    function addAddressField(e){
+        e.preventDefault();
+        AddNewItem("text", "address_section");
+    }
+    function addEmailField(e){
+        e.preventDefault();
+        AddNewItem("email", "email_section");
+    }
+        document.getElementById("add_address").addEventListener("click", addAddressField, false);
+        document.getElementById("add_email").addEventListener("click", addEmailField, false);
+{% endblock %}
